@@ -53,34 +53,34 @@ struct SCC{
     }
 };
 
-    //TopSort
-    struct topsort{
-        vector<vector<int>> g;
-        vector<int> vis, ret;
-        bool dag;
-        int n, pos;
+//TopSort
+struct topsort{
+    vector<vector<int>> g;
+    vector<int> vis, ret;
+    bool dag;
+    int n, pos;
 
-        topsort(int N){
-            g.resize(N), vis.resize(N), ret.assign(N, -1), n = N, dag = 1, pos = N-1;
-        }
+    topsort(int N){
+        g.resize(N), vis.resize(N), ret.assign(N, -1), n = N, dag = 1, pos = N-1;
+    }
 
-        void add(int a, int b){
-            g[a].push_back(b);
-        }
+    void add(int a, int b){
+        g[a].push_back(b);
+    }
 
-        vector<int> build(){
-            function<void(int)> dfs = [&](int f){
-                vis[f] = 1;
-                for(int i:g[f]){
-                    if(vis[i]==1) dag=0;
-                    else if(!vis[i]) dfs(i);
-                }
-                ret[pos--] = f, vis[f] = 2;
-            };
-            for(int i=0; i<n; i++){
-                if(!vis[i]) dfs(i);
+    vector<int> build(){
+        function<void(int)> dfs = [&](int f){
+            vis[f] = 1;
+            for(int i:g[f]){
+                if(vis[i]==1) dag=0;
+                else if(!vis[i]) dfs(i);
             }
-            if(!dag) ret.clear();
-            return ret;
+            ret[pos--] = f, vis[f] = 2;
+        };
+        for(int i=0; i<n; i++){
+            if(!vis[i]) dfs(i);
         }
-    };
+        if(!dag) ret.clear();
+        return ret;
+    }
+};
