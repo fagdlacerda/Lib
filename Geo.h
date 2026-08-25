@@ -76,3 +76,37 @@ struct CentroidQueries {
         return {ans_x, ans_y};
     }
 };
+#define ll long long
+
+struct pt{
+	ll x, y;
+	pt(ll x_ = 0, ll y_ = 0) : x(x_), y(y_) {}
+
+	pt operator - (const pt p) const { return pt(x-p.x, y-p.y);}
+};
+
+ll cross(pt a, pt b){
+	return a.x*b.y - a.y*b.x;
+}
+
+ll dot(pt a, pt b){
+	return a.x*b.x + a.y*b.y;
+}
+
+bool inseg(pt a, pt b, pt c){ // Ponto c entre a e b
+	pt ca = c-a, cb = c-b;
+	return cross(ca, cb) == 0 && dot(ca, cb) <= 0;
+}
+
+bool interseg(pt a, pt b, pt c, pt d){ //ab intersecta cd
+	pt ab = a-b, ac = a-c, ad = a-d;
+	pt cd = c-d, ca = c-a, cb = c-b;
+	ll d1 = cross(ab, ac), d2 = cross(ab, ad);
+	ll d3 = cross(cd, ca), d4 = cross(cd, cb);
+
+	if(((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return true;
+
+	if(inseg(a, b, c) || inseg(a, b, d) || inseg(c, d, a) || inseg(c, d, b)) return 1;
+	
+	return 0;
+}
