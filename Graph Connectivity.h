@@ -85,26 +85,33 @@ struct topsort{
     }
 };
 
-bool bridge = 0;
-vector<vector<int>> g(n);
-vector<int> in(n), low(n);
-int t=0;
+struct dfstree{
 
-int dfsTree(int f, int p){
-    in[f] = low[f] = t++;
+    bool bridge;
+    vector<vector<int>> g;
+    vector<int> in, low;
+    int t;
 
-    for(int i:g[f]){
-        if(i==p) continue;
-        if(!in[i]){
-            low[f] = min(low[f], dfs(i, f));
-        }
-        else{
-            low[f] = min(low[f], in[i]);
-        }
+    dfstree(int N){
+        g.resize(N), in.resize(N), out.resize(N), t = 0;
     }
 
-    if(f!=p && low[f] == in[f]){
-        bridge = 1;
+    int dfsTree(int f, int p){
+        in[f] = low[f] = t++;
+
+        for(int i:g[f]){
+            if(i==p) continue;
+            if(!in[i]){
+                low[f] = min(low[f], dfs(i, f));
+            }
+            else{
+                low[f] = min(low[f], in[i]);
+            }
+        }
+
+        if(f!=p && low[f] == in[f]){
+            bridge = 1;
+        }
+        return low[f];
     }
-    return low[f];
-}
+};
