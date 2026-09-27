@@ -86,7 +86,6 @@ struct topsort{
 };
 
 struct dfstree{
-
     bool bridge;
     vector<vector<int>> g;
     vector<int> in, low;
@@ -115,3 +114,36 @@ struct dfstree{
         return low[f];
     }
 };
+
+struct artpt{
+    vector<vector<int>> g;
+    vector<int> in;
+    vector<bool> art;
+    int t;
+
+    artpt(int N){
+        in.resize(N), g.resize(N), art.resize(N), t=0;
+    }
+
+    function<int(int, int)> dfs = [&](int f, int p){
+        int lo = in[f] = t++;
+        int a=0;
+        for(int i:g[f]){
+            if(i==p) continue;
+            if(in[i]==-1){
+                a++;
+                int tmp = dfs(i, f);
+                if(tmp >= in[f] && p!=-1) art[f] = 1;
+                lo = min(lo, tmp);
+            }
+            else{
+                lo = min(lo, in[i]);
+            }
+        }
+
+        if(p==-1 && a>1){
+            art[f] = 1;
+        }
+        return lo;
+    };
+}
