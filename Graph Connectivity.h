@@ -92,7 +92,7 @@ struct dfstree{
     int t;
 
     dfstree(int N){
-        g.resize(N), in.resize(N), out.resize(N), t = 0;
+        g.resize(N), in.resize(N), low.resize(N), t = 0;
     }
 
     int dfsTree(int f, int p){
