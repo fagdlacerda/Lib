@@ -162,13 +162,13 @@ struct aho{
     }
 };
 
-struct sa{
+struct suff_arr{
     string s;
     int n;
-    vector<int> p, c;
+    vector<int> p, c, lcp;
 
-    sa(string S){
-        s = S, n = S.size(), p.resize(n), c.resize(n);
+    suff_arr(string S){
+        s = S, n = S.size(), p.resize(n), c.resize(n), lcp.resize(n);
     }
 
     void count_sort(vector<int> &p, vector<int> &c){
@@ -229,5 +229,16 @@ struct sa{
             c = nc;
         }
         return p;
+    }
+    vector<int> calc_lcp(){
+        int k = 0;
+        for(int i=0; i<n-1; i++){
+            int pi = c[i];
+            int j = p[pi-1];
+            while(i+k < n && j+k < n && s[i+k] == s[j+k]) k++;
+            lcp[pi] = k;
+            k = max(k-1, 0);
+        }
+        return lcp;
     }
 };
