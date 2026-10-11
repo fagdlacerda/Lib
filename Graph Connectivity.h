@@ -146,4 +146,4 @@ struct artpt{
         }
         return lo;
     };
-}
+};
