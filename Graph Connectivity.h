@@ -101,7 +101,7 @@ struct dfstree{
         for(int i:g[f]){
             if(i==p) continue;
             if(!in[i]){
-                low[f] = min(low[f], dfs(i, f));
+                low[f] = min(low[f], dfsTree(i, f));
             }
             else{
                 low[f] = min(low[f], in[i]);
