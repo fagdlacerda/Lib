@@ -86,7 +86,6 @@ struct dinitz {
 
 // Recupera as arestas do corte s-t
 vector<pair<int, int>> get_cut(dinitz& g, int s, int t) {
-	g.max_flow(s, t);
 	vector<pair<int, int>> cut;
 	vector<int> vis(g.g.size(), 0), st = {s};
 	vis[s] = 1;
