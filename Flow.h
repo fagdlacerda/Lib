@@ -82,18 +82,19 @@ struct dinitz {
 			while (bfs(s, t)) while (int ff = dfs(s, t)) F += ff;
 		return F;
 	}
+
 	// Recupera as arestas do corte s-t
-	vector<pair<int, int>> get_cut(dinitz& g, int s, int t) {
+	vector<pair<int, int>> get_cut(int s, int t) {
 		vector<pair<int, int>> cut;
-		vector<int> vis(g.g.size(), 0), st = {s};
+		vector<int> vis(g.size(), 0), st = {s};
 		vis[s] = 1;
 		while (st.size()) {
 			int u = st.back(); st.pop_back();
-			for (auto e : g.g[u]) if (!vis[e.to] and e.flow < e.cap)
+			for (auto e : g[u]) if (!vis[e.to] and e.flow < e.cap)
 				vis[e.to] = 1, st.push_back(e.to);
 		}
-		int k = g.g.size();
-		for (int i = 0; i < k; i++) for (auto e : g.g[i])
+		int k = g.size();
+		for (int i = 0; i < k; i++) for (auto e : g[i])
 			if (vis[i] and !vis[e.to] and !e.res) cut.emplace_back(i, e.to);
 		return cut;
 	}
