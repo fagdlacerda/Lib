@@ -148,34 +148,66 @@ struct artpt{
     };
 };
 
-vector<pair<int,int>> virtual_tree(vector<int> v) {
-    sort(v.begin(), v.end(), [&](int a, int b) {
-        return in[a] < in[b];
-    });
+{
+    vector<pair<int,int>> virtual_tree(vector<int> v) {
+        sort(v.begin(), v.end(), [&](int a, int b) {
+            return in[a] < in[b];
+        });
 
-    int k = v.size();
+        int k = v.size();
 
-    for(int i = 1; i < k; i++)
-        v.push_back(lca(v[i-1], v[i]));
+        for(int i = 1; i < k; i++)
+            v.push_back(lca(v[i-1], v[i]));
 
-    sort(v.begin(), v.end(), [&](int a, int b) {
-        return in[a] < in[b];
-    });
+        sort(v.begin(), v.end(), [&](int a, int b) {
+            return in[a] < in[b];
+        });
 
-    v.erase(unique(v.begin(), v.end()), v.end());
+        v.erase(unique(v.begin(), v.end()), v.end());
 
-    vector<pair<int,int>> edges;
-    vector<int> st;
+        vector<pair<int,int>> edges;
+        vector<int> st;
 
-    for(int x : v) {
-        while(!st.empty() && !anc(st.back(), x))
-            st.pop_back();
+        for(int x : v) {
+            while(!st.empty() && !anc(st.back(), x))
+                st.pop_back();
 
-        if(!st.empty())
-            edges.push_back({st.back(), x});
+            if(!st.empty())
+                edges.push_back({st.back(), x});
 
-        st.push_back(x);
+            st.push_back(x);
+        }
+
+        return edges;
+    }
+}
+{
+    vector<bool> vis;
+    int calc(int f, int p){
+        sz[f] = 1;
+        for(int i:g[f]){
+            if(i==p) continue;
+            sz[f] += calc(i, f);
+        }
+        return sz[f];
     }
 
-    return edges;
+    int cent(int f, int p, int m){
+        for(int i:g[f]){
+            if(i==p) continue;
+            if(sz[i] >= m){
+                return cent(f, i, m);
+            }
+        }
+        return f;
+    }
+
+    void dec(int f){
+        int c = cent(j, -1, sz[f]);
+        vis[c] = 1;
+        for(int i:g[c]){
+            if(vis[i]) continue;
+            dec(i);
+        }
+    }
 }
