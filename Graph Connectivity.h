@@ -182,11 +182,14 @@ struct artpt{
     }
 }
 {
-    vector<bool> vis;
+    int sz[MAX], par[MAX];
+    vector<int> g[MAX];
+    vector<bool> vis(MAX);
+    
     int calc(int f, int p){
         sz[f] = 1;
         for(int i:g[f]){
-            if(i==p) continue;
+            if(i==p || vis[i]) continue;
             sz[f] += calc(i, f);
         }
         return sz[f];
@@ -194,20 +197,23 @@ struct artpt{
 
     int cent(int f, int p, int m){
         for(int i:g[f]){
-            if(i==p) continue;
-            if(sz[i] >= m){
-                return cent(f, i, m);
+            if(i==p || vis[i]) continue;
+            if(sz[i] > m/2){
+                return cent(i, f, m);
             }
         }
         return f;
     }
 
-    void dec(int f){
-        int c = cent(j, -1, sz[f]);
+    void dec(int f, int p){
+        calc(f, -1);
+        int c = cent(f, -1, sz[f]);
+        par[c] = p;
         vis[c] = 1;
+
         for(int i:g[c]){
             if(vis[i]) continue;
-            dec(i);
+            dec(i, c);
         }
     }
 }
