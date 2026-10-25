@@ -6,10 +6,11 @@ struct SCC{
     vector<vector<int>> g;
     stack<int> s;
     vector<int> vis, comp, id;
-    int n, timer;
+    int n, timer, c;
 
     SCC(int N){
-        g.resize(N), vis.resize(N), comp.resize(N), id.resize(N), n = N, timer = 0;
+        g.resize(N), vis.resize(N), comp.resize(N), 
+        id.resize(N), n = N, timer = 0, c = 0;
     }
 
     void add(int a, int b){
@@ -28,8 +29,11 @@ struct SCC{
 
         if(lo == id[f]) while(1){ //raiz
             int i = s.top(); s.pop();
-            vis[i] = 1, comp[i] = f;
-            if(i==f) break;
+            vis[i] = 1, comp[i] = c;
+            if(i==f) {
+                c++;
+                break;
+            }
         }
         return lo;
     }
