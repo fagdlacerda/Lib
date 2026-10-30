@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define ld double
+
 // Retorna o centroide de um polígono. Os vértices devem estar em ordem anti-horária.
 pt centroid(const vector<pt>& v) {
     ld area = 0, cx = 0, cy = 0;

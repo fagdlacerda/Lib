@@ -89,7 +89,6 @@ signed main(){
         updcaba(1, 0, n-1, pos[i], fds[i]);
     }
 
-    
     while(q--){
         int t; cin>>t;
         if(t==1){

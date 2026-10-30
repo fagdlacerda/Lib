@@ -38,12 +38,12 @@ vector<ll> fat(int n, int m = mod){// fatorial de 0 a n mod m
     return fact;
 }
 
-vector<ll> invfact(int n, ll m = mod){ //inverso fatorial de 0 até n
-    vector<ll> fact = fat(n, m), invfat(n+1), inverso = inver(n, m);
+vector<ll> invfact(int n, ll m = mod){ // inverso fatorial até n
+    vector<ll> invfat(n+1);
+    invfat[n] = inv(fat(n, m)[n], m);
 
-    invfat[0] = 1;
-    for(int i=1; i<=n; i++){
-        invfat[i] = invfat[i-1] * inverso[i] % m;
+    for(int i=n; i>=1; i--){
+        invfat[i-1] = invfat[i] * i % m;
     }
     return invfat;
 }

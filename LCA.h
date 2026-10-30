@@ -1,17 +1,19 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int timer = 1, l = 21, n;
-vector<int> dist(n), in(n), out(n);
-vector<vector<int>> g(n), up(n, vector<int>(l));
+const int MAX = 2e5;
+
+int timer = 1, l = 21;
+vector<int> dist(MAX), in(MAX), out(MAX);
+vector<vector<int>> g(MAX), up(MAX, vector<int>(l));
 
 void dfs(int f, int p){
     in[f] = timer++;
-    dist[f] = dist[p]+1;
     up[f][0] = p;
     for(int i=1; i<l; i++) up[f][i] = up[up[f][i-1]][i-1];
     for(int i:g[f]){
         if(i==p) continue;
+        dist[i] = dist[f]+1;
         dfs(i, f);
     }
     out[f] = timer++;
