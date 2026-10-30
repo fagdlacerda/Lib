@@ -4,82 +4,102 @@ using namespace std;
 #define ll long long
 const int MAX = 1e5+1;
 
-int sz[MAX], par[MAX], h[MAX], pos[MAX];
-int seg[4*MAX], v[MAX];
+int sz[MAX], par[MAX], pos[MAX], seg[MAX*4], lazy[MAX*4], h[MAX];
 vector<int> g[MAX];
-
-void dfs(int f, int p){
+ 
+int dfs(int f, int p){
     sz[f] = 1;
-    int maior = 0;
+    int big = 0;
     for(int &i:g[f]){
         if(i==p) continue;
-        dfs(i, f);
         par[i] = f;
-        sz[f] += sz[i];
-        if(sz[i] > maior){
+        sz[f] += dfs(i, f);
+        if(sz[i] > big){
+            big = sz[i];
             swap(i, g[f][0]);
-            maior = sz[i];
         }
     }
+    return sz[f];
 }
-
-void build_hld(int f, int p, int head, int& t){
+ 
+void build_hld(int f, int p, int head, int &t){
     pos[f] = t++;
     h[f] = head;
-    bool fir = 1;
-    for(int i:g[f]){
+    bool heavy = 1;
+    for(int i: g[f]){
         if(i==p) continue;
-        if(fir){
-            fir = 0;
+        if(heavy){
+            heavy = 0;
             build_hld(i, f, head, t);
         }
         else{
             build_hld(i, f, i, t);
         }
     }
-};
-
-int build_seg(int p, int l, int r){
-    if(l==r) return seg[p] = v[l];
-    int mid = (l+r)>>1;
-    return seg[p] = build_seg(2*p, l, mid) + build_seg(2*p+1, mid+1, r);
 }
-
-int seg_update(int p, int l, int r, int idx, int val){
-    if(l>idx || r<idx) return seg[p];
-    if(r==l) return seg[p] = val;
-    int mid = (l+r)>>1;
-    return seg[p] = seg_update(2*p, l, mid, idx, val) +
-                    seg_update(2*p+1, mid+1, r, idx, val);
-}
-
-int seg_query(int p, int l, int r, int a, int b){
-    if(l>b || r<a) return 0;
-    if(l>=a && r<=b) return seg[p];
-    int mid = (l+r)>>1;
-    return seg_query(2*p, l, mid, a, b) + 
-           seg_query(2*p+1, mid+1, r, a, b);
-}
-
-int query(int a, int b, int n){
-    if(pos[b] > pos[a]) swap(a, b);
-
-    if(pos[h[a]] == pos[h[b]]){
-        return seg_query(1, 0, n-1, pos[a], pos[b]);
+ 
+void build_seg(){
+    for(int i=0; i<4*MAX; i++){
+        lazy[i] = seg[i] = 0;
     }
-
-    int ans = seg_query(1, 0, n-1, pos[h[a]], pos[a]);
-    ans += query(par[h[a]], b, n);
+}
+ 
+void prop(int p, int l, int r){
+    if(!lazy[p]) return;
+    seg[p] += (lazy[p] * (r-l+1));
+    if(l!=r){
+        lazy[2*p] += lazy[p];
+        lazy[2*p+1] += lazy[p];
+    }
+    lazy[p] = 0;
+}
+ 
+int seg_update(int p, int l, int r, int i, int j, int v){
+    prop(p, l, r);
+    if(l>j || r<i) return seg[p];
+    if(l>=i && r<=j){
+        lazy[p] += v;
+        prop(p, l, r);
+        return seg[p];
+    }
+    int m = (l+r)>>1;
+    return seg[p] = seg_update(2*p, l, m, i, j, v) +
+                    seg_update(2*p+1, m+1, r, i, j, v);
+}
+ 
+int seg_query(int p, int l, int r, int i, int j){
+    prop(p, l, r);
+    if(l>j || r<i) return 0;
+    if(l>=i && r<=j) return seg[p];
+    int m = (l+r)>>1;
+    return seg_query(2*p, l, m, i, j) + seg_query(2*p+1, m+1, r, i, j);
+}
+ 
+void update(int a, int b, int n, int v){
+    while(h[a] != h[b]){
+        if(pos[a] < pos[b]) swap(a, b);
+        seg_update(1, 0, n-1, pos[h[a]], pos[a], v);
+        a = par[h[a]];
+    }
+    if(pos[a] < pos[b]) swap(a, b);
+    seg_update(1, 0, n-1, pos[b], pos[a], v);
+}
+ 
+int query(int a, int b, int n){
+    int ans = 0;
+    while(h[a] != h[b]){
+        if(pos[a] < pos[b]) swap(a, b);
+        ans += seg_query(1, 0, n-1, pos[h[a]], pos[a]);
+        a = par[h[a]];
+    }
+    if(pos[a] < pos[b]) swap(a, b);
+    ans += seg_query(1, 0, n-1, pos[b], pos[a]);
     return ans;
 }
-
-void update(int a, int val, int n){
-    seg_update(1, 0, n-1, pos[a], val);
-}
-
-void build(int root, int n){
+ 
+void build(int n){
     dfs(0, -1);
     int t = 0;
-    build_hld(root, -1, root, t);
-    build_seg(1, 0, n-1);
+    build_hld(0, -1, 0, t);
+    build_seg();
 }
